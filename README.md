@@ -6,7 +6,15 @@
 
 You will need the following for the project to run:
 
-- Node
+- NodeJS - https://nodejs.org (Version 8.0+ is the minimum, recommended version would be the latest LTS)
+- Yarn - https://yarnpkg.com/en/docs/install
+- git - https://www.linode.com/docs/development/version-control/how-to-install-git-on-linux-mac-and-windows/
+
+Grab the repo in its current state:
+
+```
+git clone https://github.com/CrazyEggInc/hud-v2
+```
 
 ## Running the project
 
@@ -23,6 +31,10 @@ Once you are done, simply run:
 ```bash
 yarn submit
 ```
+
+and follow the prompts.
+
+Good luck!
 
 ---
 
