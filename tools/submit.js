@@ -1,6 +1,6 @@
-const { printHeader, checkServer, initEnv, upload, createTar } = require('./terminal');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
+const { printHeader, checkServer, initEnv, upload, createTar } = require('./terminal');
 
 const start = async () => {
   initEnv();
@@ -19,13 +19,11 @@ const start = async () => {
   const firstName = answers.firstName.replace(/[\W_]+/g, '').toLowerCase();
   const lastName = answers.lastName.replace(/[\W_]+/g, '').toLowerCase();
   const fileName = `${firstName}${lastName}`;
-  console.log(fileName);
-  exit(1);
 
   try {
     const compressedFile = await createTar(fileName);
     await upload(compressedFile);
-  } catch (err) {
+  } catch (error) {
     console.error(chalk.red('Failed to submit.'));
   }
 };
