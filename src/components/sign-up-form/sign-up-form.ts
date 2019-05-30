@@ -7,7 +7,7 @@ const SignUpForm = {
     return m('form.sign-up', {
       onsubmit(e) {
         e.preventDefault();
-
+        document.location.href = '/#!/login';
       }
     }, [
       m('label.input-label', { for: 'domain' }, 'Domain'),

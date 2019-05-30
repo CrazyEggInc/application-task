@@ -21,8 +21,10 @@ git clone https://github.com/CrazyEggInc/hud-v2
 Run:
 
 ```bash
-yarn dev
+yarn start
 ```
+
+After the Webpack compilation has finished, the app will be running on [http://localhost:8080/](http://localhost:8080/)
 
 ## Submission
 
