@@ -14,9 +14,9 @@ const ListView = {
         m('span.list-header-item', m.trust('&nbsp;')),
       ]),
       ...data.map((dataItem, idx) => m('.list-item', { key: `item${idx}` }, [
-        m('span.data-item-title', dataItem.title),
+        m('div.data-item-title', m('span', dataItem.title)),
         m('div.data-item-enabled', dataItem.enabled ? m('i.fas.fa-check') : m('i.fas.fa-times')),
-        m('div.data-item-views', String(dataItem.views)),
+        m('div.data-item-views', m('span', String(dataItem.views))),
         m(SettingsMenu)
       ]))
     ])
