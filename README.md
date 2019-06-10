@@ -18,6 +18,14 @@ git clone https://github.com/CrazyEggInc/application-task
 
 ## Running the project
 
+Be sure to keep update all runtime dependencies:
+
+Run:
+
+```bash
+yarn
+```
+
 Run:
 
 ```bash
