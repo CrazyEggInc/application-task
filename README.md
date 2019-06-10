@@ -13,7 +13,7 @@ You will need the following for the project to run:
 Grab the repo in its current state:
 
 ```
-git clone https://github.com/CrazyEggInc/hud-v2
+git clone https://github.com/CrazyEggInc/application-task
 ```
 
 ## Running the project
