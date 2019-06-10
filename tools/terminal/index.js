@@ -6,7 +6,7 @@ const clear = require('clear');
 const inquirer = require('inquirer');
 const ora = require('ora');
 const AWS = require('aws-sdk');
-const { createReadStream, readdirSync, createWriteStream } = require('fs');
+const { createReadStream, statSync, createWriteStream } = require('fs');
 const tar = require('tar-fs');
 const del = require('del');
 const chalk = require('chalk');
@@ -44,10 +44,10 @@ exports.checkServer = async (name, address, errCallback) => {
       spinner.text = `${name.toUpperCase()} is not available on ${address}`;
       spinner.fail();
     }
-  } catch (err) {
+  } catch (error) {
     spinner.text = `${name.toUpperCase()} is not available on ${address}`;
     spinner.fail();
-    errCallback(err);
+    errCallback(error);
   }
 
   console.log();
@@ -69,7 +69,7 @@ exports.createTar = async (fileName) => {
         ignore: name => {
           if (extname(name) === '.tar' || extname(name) === '.tar.gz') { // ignore .tar files when packing
             return true;
-          } else if (name.includes('/node_modules/')) {
+          } if (name.includes('/node_modules/')) {
             return true;
           }
         }
@@ -90,37 +90,40 @@ exports.createTar = async (fileName) => {
   });
 };
 
-exports.upload = (fileName) => {
-  return new Promise((resolve, reject) => {
-    const spinner = ora({
-      text: `Uploading...`
-    }).start();
+const getSignedUrl = async (objectKey) => {
+  const url = 'https://lvf7t1rj5e.execute-api.us-east-1.amazonaws.com/production/api';
+  const params = new URLSearchParams({ object_key:  objectKey });
+  const request = await fetch(`${url}?${params}`);
+  const response = await request.json();
+  return response;
+}
 
-    const s3Bucket = new AWS.S3({
-      endpoint: 'https://s3.amazonaws.com/ce-application-submissions/',
-      s3BucketEndpoint: true
+exports.upload = async (fileName) => {
+  const spinner = ora({
+    text: `Uploading...`
+  }).start();
+
+  const filePath = join(__dirname, '..', '..', fileName);
+  const stats = statSync(filePath);
+  const readStream = createReadStream(filePath);
+
+  const signedUrl = await getSignedUrl(fileName);
+
+  try {
+    await fetch(signedUrl.url, {
+      method: 'PUT',
+      headers: {
+        'Content-Length': stats.size,
+        'Content-Encoding': 'gzip',
+        'Content-Type': 'binary/octet-stream',
+      },
+      body: readStream
     });
-
-    const filePath = join(__dirname, '..', '..', fileName);
-    const readStream = createReadStream(filePath);
-
-    const params = {
-      Bucket: 'ce-application-submissions',
-      Key: fileName,
-      Body: readStream
-    };
-
-    s3Bucket.upload(params, (err, data) => {
-      if (err) {
-        console.error(chalk.red('Failed to upload. Please check your connection and try again.'));
-        spinner.text = 'Upload failed!';
-        spinner.fail();
-        reject();
-      } else {
-        spinner.text = 'Upload completed successfully!';
-        spinner.succeed();
-        resolve();
-      }
-    });
-  });
+    spinner.text = 'Upload completed successfully!';
+    spinner.succeed();
+  } catch (error) {
+    console.error(chalk.red('Failed to upload. Please check your connection and try again'));
+    spinner.text = 'Upload failed!';
+    spinner.fail();
+  }
 };
